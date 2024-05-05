@@ -1,34 +1,37 @@
+
 const router = require('express').Router()
+
 const { getCollection, ObjectId } = require('../joke-db')
 
-router.get('/joke/:id', async (request, respone) => {
+router.get('/joke/:id', async (request, response) => {
 	const { id } = request.params
 	const collection = await getCollection('Jokes-API', 'Jokes')
 	const joke = await collection.findOne({ "_id": new ObjectId(id) })
-	respone.json(joke)
+	response.json(joke)
 })
 
+
 router.get('/random', async (request, response) => {
-    const collection = await getConnection('Jokes-API', 'Jokes')
-    const jokes = await collection.find({}).toArray()
-    const randomIndex = Math.floor(Math.random() * jokes.length)
-    response.json(jokes[randomIndex])
+	const collection = await getCollection('Jokes-API', 'Jokes')
+	const jokes = await collection.find({}).toArray()
+	const randomIndex = Math.floor(Math.random() * jokes.length)
+	response.json(jokes[randomIndex])
 })
 
 router.get('/random/exclude/:id', async (request, response) => {
-    const { id } = request.params
-    const collection = await getCollection('Jokes-API', 'Jokes')
-    const jokes = await collection.find().toArray()
-    const filteredJokes = jokes.filter(({ _id }) => _id.toString() !== id)
-    const randomIndex = Math.floor(Math.random() * filteredJokes.length)
-    response.json(filteredJokes[randomIndex])
+	const { id } = request.params
+	const collection = await getCollection('Jokes-API', 'Jokes')
+	const jokes = await collection.find({}).toArray()
+	const filteredJokes = jokes.filter(({ _id }) => _id.toString() !== id)
+	const randomIndex = Math.floor(Math.random() * filteredJokes.length)
+	response.json(filteredJokes[randomIndex])
 })
 
 router.post('/new', async (request, response) => {
-    const { joke, punchline } = request.body
-    const collection = await getCollection('Jokes-API', 'Jokes')
-    await collection.insertOne({ joke, punchline })
-    response.json({ message: 'New joke added!' })
+	const { joke, punchline } = request.body
+	const collection = await getCollection('Jokes-API', 'Jokes')
+	await collection.insertOne({ joke, punchline })
+	response.json({ message: 'New joke added!' })
 })
 
 module.exports = router
